@@ -166,15 +166,15 @@ end_value = conv_num(stock[:, 5])
 stock_date = stock[:, 1]
 
 #%%
-up, down, even = get_up_down_index(end_value, 2, 0.03)
+up, down, even = get_up_down_index(end_value, 2, 0.01)
 up_date = stock_date[up]
 down_date = stock_date[down]
 even_date = stock_date[even]
 # select important keyword to filter documents
 up_docs, up_docs_index =  get_doc_by_date(up_date, news)
 down_docs, down_docs_index =  get_doc_by_date(down_date, news)
-up_docs, up_docs_index = keyword_select(up_docs, up_docs_index, ['友達', '轉盈','漲','拉抬','外資','旺季','回溫','扭轉','提升'])
-down_docs, down_docs_index = keyword_select(down_docs, down_docs_index, ['友達', '衰退', '淡季', '跌', '報價下滑', '虧損'])
+up_docs, up_docs_index = keyword_select(up_docs, up_docs_index, ['平盤','漲','跌','友達','光電','面板','彭双浪','auo','蔡國新','達碁','顯示器','明基','達運','佳世達','宇沛','瑞鼎','創立','報價','台股','股市','轉盈','衰退','外資','淡季','旺季'])
+down_docs, down_docs_index = keyword_select(down_docs, down_docs_index, ['平盤','漲','跌','友達','光電','面板','彭双浪','auo','蔡國新','達碁','顯示器','明基','達運','佳世達','宇沛','瑞鼎','創立','報價','台股','股市','轉盈','衰退','外資','淡季','旺季'])
 even_docs, even_docs_index = get_doc_by_date(even_date, news)
 #%%
 up_x, up_vec = tfidf_tool(up_docs)
@@ -226,27 +226,26 @@ pred_dic = {
 }
 pred_table = pd.DataFrame(pred_dic)
 print(pred_table)
-print('correct', len(pred_table[pred_table['pred'] == pred_table['actual']]))
-print('up correct', len(pred_table[pred_table['pred'] == pred_table['actual'] == 1]))
+
 #==============================try predict 2017==========================
 #%%
 stock_test = get_stock_data('2017_stock_data.csv', '友達')
 end_value_test = conv_num(stock_test[:, 5])
 stock_date_test = stock_test[:, 1]
-up_test, down_test, even_date = get_up_down_index(end_value_test, 2, 0.03)
-up_date_test = stock_date[up_test]
-down_date_test = stock_date[down_test]
-even_date_test = stock_date[even_test]
+up_test, down_test, even_test = get_up_down_index(end_value_test, 2, 0.01)
+up_date_test = stock_date_test[up_test]
+down_date_test = stock_date_test[down_test]
+even_date_test = stock_date_test[even_test]
 # select important keyword to filter documents
-up_docs_test, up_docs_test_index =  get_doc_by_date(up_date, news)
-down_docs_test, down_docs_test_index =  get_doc_by_date(down_date, news)
-up_docs_test, up_docs_test_index = keyword_select(up_docs_test, up_docs_test_index, ['友達', '轉盈','漲','拉抬','外資','旺季','回溫','扭轉','提升'])
-down_docs_test = keyword_select(down_docs_test, down_docs_test_index, ['友達', '衰退', '淡季', '跌', '報價下滑', '虧損'])
-even_docs_test, even_docs_test_index = get_doc_by_date(even_date, news)
+up_docs_test, up_docs_test_index =  get_doc_by_date(up_date_test, news)
+down_docs_test, down_docs_test_index =  get_doc_by_date(down_date_test, news)
+up_docs_test, up_docs_test_index = keyword_select(up_docs_test, up_docs_test_index, ['平盤','漲','跌','友達','光電','面板','彭双浪','auo','蔡國新','達碁','顯示器','明基','達運','佳世達','宇沛','瑞鼎','創立','報價','台股','股市','轉盈','衰退','外資','淡季','旺季'])
+down_docs_test, down_docs_test_index = keyword_select(down_docs_test, down_docs_test_index, ['平盤','漲','跌','友達','光電','面板','彭双浪','auo','蔡國新','達碁','顯示器','明基','達運','佳世達','宇沛','瑞鼎','創立','報價','台股','股市','轉盈','衰退','外資','淡季','旺季'])
+even_docs_test, even_docs_test_index = get_doc_by_date(even_date_test, news)
 
 temp = TfidfVectorizer(vocabulary = docs_vector.get_feature_names())
 total_test = up_docs_test+even_docs_test+down_docs_test
-X_test = temp.fit_transform(test).toarray()
+X_test = temp.fit_transform(total_test).toarray()
 y_test = []
 for i in range(len(up_docs_test)):
     y_test.append(1)
